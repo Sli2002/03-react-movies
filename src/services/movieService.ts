@@ -3,10 +3,10 @@ import type { Movie } from "../types/movie";
 import type { AxiosResponse } from "axios";
 
 const BASE_URL = "https://api.themoviedb.org/3";
-const TOKEN = process.env.REACT_APP_TMDB_TOKEN; 
+const TOKEN = process.env.REACT_APP_TMDB_TOKEN;
 
 if (!TOKEN) {
-  
+}
 
 export interface FetchMoviesParams {
   query: string;

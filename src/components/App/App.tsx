@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import css from "./App.module.css";
+
 import SearchBar from "../SearchBar/SearchBar";
 import MovieGrid from "../MovieGrid/MovieGrid";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieModal from "../MovieModal/MovieModal";
+
 import toast, { Toaster } from "react-hot-toast";
 
 import type { Movie } from "../../types/movie";
@@ -16,22 +18,21 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  const totalMovies = movies.length;
-
   const handleSearch = async (query: string) => {
     setMovies([]);
     setError(null);
-
     setLoading(true);
+
     try {
       const data = await fetchMovies({ query });
+
       if (!data.results || data.results.length === 0) {
         toast("No movies found for your request.");
         setMovies([]);
       } else {
         setMovies(data.results);
       }
-    } catch (err) {
+    } catch {
       setError("There was an error");
       toast.error("There was an error, please try again...");
     } finally {
@@ -62,7 +63,7 @@ export default function App() {
 
       {!loading && !error && movies.length === 0 && (
         <p style={{ textAlign: "center", marginTop: 20 }}>
-          {/* Можна замінити на Notification компонент, якщо у тебе є */}
+          {/* Тут можна показати компонент Notification */}
         </p>
       )}
 
