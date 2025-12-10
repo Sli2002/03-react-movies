@@ -1,82 +1,53 @@
-import { useState } from "react";
-import css from "./App.module.css";
+import css from "./SearchBar.module.css";
+import toast from "react-hot-toast";
 
-import SearchBar from "../SearchBar/SearchBar";
-import MovieGrid from "../MovieGrid/MovieGrid";
-import Loader from "../Loader/Loader";
-import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import MovieModal from "../MovieModal/MovieModal";
+interface SearchBarProps {
+  onSubmit: (query: string) => void;
+}
 
-import toast, { Toaster } from "react-hot-toast";
+export default function SearchBar({ onSubmit }: SearchBarProps) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
 
-import type { Movie } from "../../types/movie";
-import { fetchMovies } from "../../services/movieService";
-
-export default function App() {
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-
-  const handleSearch = async (query: string) => {
-    setMovies([]);
-    setError(null);
-    setLoading(true);
-
-    try {
-      const data = await fetchMovies({ query });
-
-      if (!data.results || data.results.length === 0) {
-        toast("No movies found for your request.");
-        setMovies([]);
-      } else {
-        setMovies(data.results);
-      }
-    } catch {
-      setError("There was an error");
-      toast.error("There was an error, please try again...");
-    } finally {
-      setLoading(false);
-    }
-  };
-  const searchAction = async (formData: FormData) => {
-    const query = formData.get("query")?.toString().trim() ?? "";
+    const form = e.currentTarget;
+    const query = (form.query as HTMLInputElement).value.trim();
 
     if (!query) {
       toast.error("Please enter your search query.");
       return;
     }
 
-    await handleSearch(query);
-  };
-
-  const handleSelect = (movie: Movie) => {
-    setSelectedMovie(movie);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedMovie(null);
-  };
+    onSubmit(query);
+    form.reset();
+  }
 
   return (
-    <div className={css.app}>
-      <Toaster position="top-right" />
-      <SearchBar action={searchAction} />
+    <header className={css.header}>
+      <div className={css.container}>
+        <a
+          className={css.link}
+          href="https://www.themoviedb.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Powered by TMDB
+        </a>
 
-      {loading && <Loader />}
-      {error && <ErrorMessage />}
+        <form className={css.form} onSubmit={handleSubmit}>
+          <input
+            className={css.input}
+            type="text"
+            name="query"
+            autoComplete="off"
+            placeholder="Search movies..."
+            autoFocus
+          />
 
-      {!loading && !error && movies.length > 0 && (
-        <MovieGrid movies={movies} onSelect={handleSelect} />
-      )}
-
-      {!loading && !error && movies.length === 0 && (
-        <p style={{ textAlign: "center", marginTop: 20 }}></p>
-      )}
-
-      {selectedMovie && (
-        <MovieModal movie={selectedMovie} onClose={handleCloseModal} />
-      )}
-    </div>
+          <button className={css.button} type="submit">
+            Search
+          </button>
+        </form>
+      </div>
+    </header>
   );
 }
