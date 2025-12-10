@@ -39,6 +39,16 @@ export default function App() {
       setLoading(false);
     }
   };
+  const searchAction = async (formData: FormData) => {
+    const query = formData.get("query")?.toString().trim() ?? "";
+
+    if (!query) {
+      toast.error("Please enter your search query.");
+      return;
+    }
+
+    await handleSearch(query);
+  };
 
   const handleSelect = (movie: Movie) => {
     setSelectedMovie(movie);
@@ -51,10 +61,9 @@ export default function App() {
   return (
     <div className={css.app}>
       <Toaster position="top-right" />
-      <SearchBar onSubmit={handleSearch} />
+      <SearchBar action={searchAction} />
 
       {loading && <Loader />}
-
       {error && <ErrorMessage />}
 
       {!loading && !error && movies.length > 0 && (
@@ -62,9 +71,7 @@ export default function App() {
       )}
 
       {!loading && !error && movies.length === 0 && (
-        <p style={{ textAlign: "center", marginTop: 20 }}>
-          {/* Тут можна показати компонент Notification */}
-        </p>
+        <p style={{ textAlign: "center", marginTop: 20 }}></p>
       )}
 
       {selectedMovie && (

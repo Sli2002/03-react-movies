@@ -1,9 +1,7 @@
 import axios from "axios";
 import type { Movie } from "../types/movie";
-import type { AxiosResponse } from "axios";
 
-const BASE_URL = "https://api.themoviedb.org/3/search/movie";
-
+const BASE_URL = "https://api.themoviedb.org/3";
 const TOKEN = import.meta.env.VITE_TMDB_TOKEN;
 
 if (!TOKEN) {
@@ -37,8 +35,7 @@ export async function fetchMovies(
       "Content-Type": "application/json;charset=utf-8",
     },
   };
-
-  const response: AxiosResponse<MoviesResponse> = await axios.get(
+  const response = await axios.get<MoviesResponse>(
     `${BASE_URL}/search/movie`,
     config
   );
